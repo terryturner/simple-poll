@@ -1,0 +1,60 @@
+version: '3'
+services:
+    ap:
+        image: terryturner/simple-poll:latest
+        restart: always
+        volumes:
+            - ./logs:/logs
+        networks:
+            - simple-poll
+        ports:
+            - 8080:8080
+
+    db:
+        image: postgres:13.4
+        restart: always
+        container_name: postgres
+        privileged: true
+        environment:
+            POSTGRES_USER: ${DB_ROOT}
+            POSTGRES_PASSWORD: ${DB_PWD}
+            POSTGRES_DB: ${DB_NAME}
+            TZ: ${TIMEZONE}
+#        volumes:
+#            - ./storage/pgdata13:/var/lib/postgresql/data
+        networks:
+            - simple-poll
+        ports:
+            - 5432:5432
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-U", "${DB_ROOT}", "-d", "${DB_NAME}"]
+            interval: 5s
+            timeout: 1s
+            retries: 2
+    adminer:
+        container_name: adminer
+        restart: always
+        image: adminer:4.8.1
+        environment:
+            ADMINER_DESIGN: price
+            TZ: ${TIMEZONE}
+        networks:
+            - simple-poll
+        ports:
+            - 8081:8080
+    redis:
+        container_name: redis
+        restart: always
+        image: redis:5.0.0
+        environment:
+            TZ: ${TIMEZONE}
+        networks:
+            - simple-poll
+        ports:
+            - 6379:6379
+#        volumes:
+#            - ./redis:/data
+        command: redis-server
+
+networks:
+    simple-poll:

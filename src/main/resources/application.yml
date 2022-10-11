@@ -1,0 +1,98 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /service/poll
+    session:
+      timeout: 600
+spring:
+  application:
+    name: simple-poll
+  session:
+    store-type: redis
+    redis:
+      namespace: test:spring:session
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    out-of-order: false
+    schemas:
+    - public
+    locations:
+    - classpath:/db/migration
+    table: flyway_schema_history
+    encoding: UTF-8
+    baseline-version: 1
+  transaction:
+    default-timeout: 60
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true&currentSchema=public&TimeZone=Asia/Hong_Kong
+    username: root
+    password: p@ssword
+    tomcat:
+      max-wait: 10000
+      max-active: 40
+      test-on-borrow: true
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  data:
+    redis:
+      repositories:
+        enabled: false
+  # JPA properties
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database: default
+    database-platform: com.simple.poll.config.database.postgres.PostgresDialect
+    open-in-view: false
+    generate-ddl: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: com.simple.poll.config.database.postgres.PostgresDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  redis:
+    host: localhost
+    port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+security:
+  jwt:
+    public: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnciuNyvdjon1FNbzLQ0ZfKyTnYBRYFtraGQSR93gXGtjZuaay7iCq6+jR4jV4lUB5DhczDmFpWehhVVHYd17lOolalv0ABkqGylLK6Q0axu/Ivr7MBckSNubjk+T8++/6Qp8kq3cvVAJ8kq8GsyTcuIIk4ZEon0vnhIqe8VY57O+82YeI8lsQekBZakGzSCD4TyrD3Tc3GPBJOk3qwJV6al+Z95DExc3SoNCtub11XwQzjodUCVy5mqg+ht4+tlJfCivHS9ROtqSVsgaqgciXNPfrTkSiwAOWmwoAdTHhVV6+86Lv1lijGZKx1w1dLwh/cAyeaBl1wQoTDMVUnQ2PwIDAQAB
+    private: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCdyK43K92OifUU1vMtDRl8rJOdgFFgW2toZBJH3eBca2Nm5prLuIKrr6NHiNXiVQHkOFzMOYWlZ6GFVUdh3XuU6iVqW/QAGSobKUsrpDRrG78i+vswFyRI25uOT5Pz77/pCnySrdy9UAnySrwazJNy4giThkSifS+eEip7xVjns77zZh4jyWxB6QFlqQbNIIPhPKsPdNzcY8Ek6TerAlXpqX5n3kMTFzdKg0K25vXVfBDOOh1QJXLmaqD6G3j62Ul8KK8dL1E62pJWyBqqByJc09+tORKLAA5abCgB1MeFVXr7zou/WWKMZkrHXDV0vCH9wDJ5oGXXBChMMxVSdDY/AgMBAAECggEBAJEWwFyrUYiJA3yuS97ZdN5YM0VZgXsBlbrgio7bUDyr4zP0SdObT01grNxSz5rYYGzkBzEkk+iNatGYoZM0fzdoOA+djrmoajefuSfgTvNPCGu6LtEB9rOofVpXgs2FYQuCQRsAFUNgHkVWw7JA/DVf9FLz3JkuVGMegUJfLmmgQYlp2I7BSaOMm8zPC2OK1k1/66chgDIfMTR6e4h8Y4KCp8yT0mxxbP/mxXTXts4dDgWhs7mntcYposBVrReNj/MqSyssMEdXsWcCsFV57YwrJivvrq4o/FO73y6P152xddyWJlHBzTAHmcSbIglRA98F8Q1npu5awbxFMKq28AECgYEA6vlbXa98Ey/eQ1+H8qHS6+lI4Txn8+hLge5TWlmqEzRF0nmGkJfxSdFuClgGhGdDMzw4e+r6fhFFxAZuDrpi3aWWMvJUhhIv3TdDGPE/wWiwZ3PCHQA4o1rwZPpZFBikNeFFmSUVNP/Fr1thMvUkbMRLUvnb6aEcrbtBgNafBQECgYEAq+cZQSX+4K3mLbBO2qhWSR/sv7OGinaPpuHZHlDv8oLuYjkxiaGirRFqkJPEfi8Ho687zhHTLbsDUTO8LMlwpWdVbFd6Zp6ooZ82m98jDd8QzXWxbyUz6u1NH6ijeDw6G4y8y2tvpc9rUBiHid744SpTd3XgD8bWhT3BgYVq+z8CgYEAgjhvShxWxstggjYPQYgtPFCs8yZm9eVm8zsBNrE6cCooB90RllCeiCposZLXCcmwlFRreUFgUT2BTIHDvKXO5Mc/1jw2W5b4r8BQjyIkEyvRl4OvsCLPQLjFQTD87QY6+yE9UQIcHqMhC225EGSLKzweAn42QePn4OBGDQDkYAECgYA86zv263kktFvjCx0Wvhs99NNYqE1gml2UHWttI++0uJO0OWKFzMMyo/5o2AUFVrNVXY9LGuQEy8aEK1pfYM/Lvg/2whV9cnJ+PEcE/BGXI9r3hOLpaXy5n3j6ZC/yNx28j6aETEGXuCbmjprR0DPQz8geiKZr0OJK+7SsqtRbzwKBgGOUGaVePhKtIz9wDF9TMLoD/rmiLzxusbkFz/SUizfFIakK7/r7b0kaRgPRbK6mDLnB/aizuKDMx3NY46JLHiH8VJ4PFl/eEPJZnMXNqwwaN20fNIqs3sql28aO2y8RivJNfEnwBKIDKpBOtAvwm07b2yqpn40UlMd7/drbge25
+
+# Logger configuration
+logging:
+  config: classpath:logback.xml
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+  level:
+    org:
+      springframework: INFO
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql: 
+              BasicBinder: INFO
